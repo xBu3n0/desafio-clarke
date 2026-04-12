@@ -14,7 +14,7 @@ from app.application.dto import (
 )
 from app.application.ports import UnitOfWork
 from app.domain.exceptions import EntityNotFoundError
-from app.domain.value_objects import ConsumoKwh, SiglaEstado, Solucao
+from app.domain.value_objects import Solucao
 
 UnitOfWorkFactory = Callable[[], UnitOfWork]
 
@@ -27,8 +27,8 @@ class BuscarOfertasUseCase:
         self._uow_factory = uow_factory
 
     def execute(self, command: BuscarOfertasCommand) -> ResultadoBuscaDTO:
-        sigla_estado = SiglaEstado.create(command.sigla_estado)
-        consumo_kwh = ConsumoKwh.create(command.consumo_kwh)
+        sigla_estado = command.sigla_estado
+        consumo_kwh = command.consumo_kwh
 
         with self._uow_factory() as uow:
             estado = uow.estados.get_by_sigla(sigla_estado.value)

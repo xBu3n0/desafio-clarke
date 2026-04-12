@@ -1,11 +1,12 @@
 from dataclasses import dataclass
-from decimal import Decimal
+
+from app.domain.value_objects import ConsumoKwh, SiglaEstado
 
 
 @dataclass(frozen=True, slots=True)
 class BuscarOfertasCommand:
-    sigla_estado: str
-    consumo_kwh: Decimal
+    sigla_estado: SiglaEstado
+    consumo_kwh: ConsumoKwh
 
 
 @dataclass(frozen=True, slots=True)

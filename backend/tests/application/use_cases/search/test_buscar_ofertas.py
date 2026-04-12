@@ -18,7 +18,7 @@ from app.application.ports import (
 )
 from app.application.use_cases import BuscarOfertasUseCase
 from app.domain.exceptions import EntityNotFoundError, ValidationError
-from app.domain.value_objects import Solucao
+from app.domain.value_objects import ConsumoKwh, SiglaEstado, Solucao
 
 
 class FakeEstadoSearchRepository(EstadoSearchRepository):
@@ -133,6 +133,17 @@ def make_oferta(
     )
 
 
+def make_command(
+    *,
+    sigla_estado: str = "SP",
+    consumo_kwh: str = "1000",
+) -> BuscarOfertasCommand:
+    return BuscarOfertasCommand(
+        sigla_estado=SiglaEstado.create(sigla_estado),
+        consumo_kwh=ConsumoKwh.create(Decimal(consumo_kwh)),
+    )
+
+
 def test_search_builds_ranked_results_grouped_by_solution() -> None:
     estado = make_estado()
     fornecedor_a = make_fornecedor(
@@ -165,12 +176,7 @@ def test_search_builds_ranked_results_grouped_by_solution() -> None:
     )
     use_case = BuscarOfertasUseCase(lambda: uow)
 
-    result = use_case.execute(
-        BuscarOfertasCommand(
-            sigla_estado="SP",
-            consumo_kwh=Decimal("1000"),
-        )
-    )
+    result = use_case.execute(make_command())
 
     assert result.estado_sigla == "SP"
     assert result.custo_base == "500.00"
@@ -207,12 +213,7 @@ def test_search_marks_a_solution_as_unavailable_when_it_has_no_offer() -> None:
     )
     use_case = BuscarOfertasUseCase(lambda: uow)
 
-    result = use_case.execute(
-        BuscarOfertasCommand(
-            sigla_estado="SP",
-            consumo_kwh=Decimal("1000"),
-        )
-    )
+    result = use_case.execute(make_command())
 
     mercado_livre = result.solucoes[1]
     assert mercado_livre.solucao == "Mercado Livre"
@@ -234,12 +235,7 @@ def test_search_keeps_negative_savings_when_an_offer_is_more_expensive() -> None
     )
     use_case = BuscarOfertasUseCase(lambda: uow)
 
-    result = use_case.execute(
-        BuscarOfertasCommand(
-            sigla_estado="SP",
-            consumo_kwh=Decimal("1000"),
-        )
-    )
+    result = use_case.execute(make_command())
 
     gd = result.solucoes[0]
     assert gd.fornecedores[0].economia == "-50.00"
@@ -250,40 +246,17 @@ def test_search_requires_an_existing_state() -> None:
     use_case = BuscarOfertasUseCase(lambda: uow)
 
     with pytest.raises(EntityNotFoundError):
-        use_case.execute(
-            BuscarOfertasCommand(
-                sigla_estado="SP",
-                consumo_kwh=Decimal("1000"),
-            )
-        )
+        use_case.execute(make_command())
 
     assert uow.rollback_called is True
     assert uow.close_called is True
 
 
 def test_search_requires_a_valid_state_code() -> None:
-    use_case = BuscarOfertasUseCase(
-        lambda: FakeUnitOfWork(estados=[], fornecedores=[], ofertas=[])
-    )
-
     with pytest.raises(ValidationError):
-        use_case.execute(
-            BuscarOfertasCommand(
-                sigla_estado="sp",
-                consumo_kwh=Decimal("1000"),
-            )
-        )
+        make_command(sigla_estado="sp")
 
 
 def test_search_requires_a_positive_consumption() -> None:
-    use_case = BuscarOfertasUseCase(
-        lambda: FakeUnitOfWork(estados=[], fornecedores=[], ofertas=[])
-    )
-
     with pytest.raises(ValidationError):
-        use_case.execute(
-            BuscarOfertasCommand(
-                sigla_estado="SP",
-                consumo_kwh=Decimal("0"),
-            )
-        )
+        make_command(consumo_kwh="0")
