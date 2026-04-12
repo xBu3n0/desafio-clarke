@@ -12,6 +12,8 @@ WORKDIR /app
 
 ARG NEXT_PUBLIC_API_URL=https://api.localhost/api/v1
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+ARG NEXT_PUBLIC_SERVER_NAME=localhost
+ENV NEXT_PUBLIC_SERVER_NAME=$NEXT_PUBLIC_SERVER_NAME
 
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .

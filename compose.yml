@@ -32,12 +32,14 @@ services:
       dockerfile: ../docker/front/Dockerfile
       args:
         NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://web.localhost/api/v1}
+        NEXT_PUBLIC_SERVER_NAME: ${NEXT_PUBLIC_SERVER_NAME:-localhost}
     mem_limit: ${FRONT_MEM_LIMIT:-512m}
     environment:
       NODE_ENV: production
       PORT: 3000
       HOSTNAME: 0.0.0.0
       NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://web.localhost/api/v1}
+      NEXT_PUBLIC_SERVER_NAME: ${NEXT_PUBLIC_SERVER_NAME:-localhost}
       INTERNAL_API_URL: http://back:5000${API_PREFIX:-/api/v1}
     expose:
       - "3000"

@@ -58,6 +58,7 @@ services:
       PORT: 3000
       HOSTNAME: 0.0.0.0
       NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-https://web.localhost/api/v1}
+      NEXT_PUBLIC_SERVER_NAME: ${NEXT_PUBLIC_SERVER_NAME:-localhost}
       WATCHPACK_POLLING: "true"
     ports:
       - "${FRONTEND_PORT:-3000}:3000"
