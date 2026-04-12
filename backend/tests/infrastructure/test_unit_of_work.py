@@ -11,17 +11,21 @@ from app.infrastructure.unit_of_work import SqlAlchemyUnitOfWork
 
 
 def test_unit_of_work_exposes_search_repositories(tmp_path) -> None:
+    # Arrange
     engine = create_engine_from_url(f"sqlite+pysqlite:///{tmp_path / 'uow.db'}")
     create_schema(engine)
     session_factory = create_session_factory(engine)
 
+    # Act
     with SqlAlchemyUnitOfWork(session_factory) as uow:
+        # Assert
         assert uow.estados is not None
         assert uow.fornecedores is not None
         assert uow.ofertas is not None
 
 
 def test_unit_of_work_translates_integrity_errors_to_domain_errors(tmp_path) -> None:
+    # Arrange
     engine = create_engine_from_url(f"sqlite+pysqlite:///{tmp_path / 'uow.db'}")
     create_schema(engine)
     session_factory = create_session_factory(engine)
@@ -48,6 +52,7 @@ def test_unit_of_work_translates_integrity_errors_to_domain_errors(tmp_path) -> 
         )
         session.commit()
 
+    # Act
     with pytest.raises(
         DuplicateEntityError,
         match="database integrity constraint violated",
@@ -63,6 +68,8 @@ def test_unit_of_work_translates_integrity_errors_to_domain_errors(tmp_path) -> 
                 )
             )
             uow.commit()
+
+            # Assert
 
             uow._session.add(
                 OfertaModel(

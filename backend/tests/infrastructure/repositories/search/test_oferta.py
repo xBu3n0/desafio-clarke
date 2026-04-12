@@ -28,6 +28,7 @@ def make_oferta(
 
 
 def test_oferta_repository_lists_offers_for_a_state(tmp_path) -> None:
+    # Arrange
     engine = create_engine_from_url(
         f"sqlite+pysqlite:///{tmp_path / 'repositories.db'}"
     )
@@ -63,7 +64,10 @@ def test_oferta_repository_lists_offers_for_a_state(tmp_path) -> None:
         session.commit()
 
         repository = SqlAlchemyOfertaSearchRepository(session)
+
+        # Act
         ofertas = repository.list_by_estado_id(1)
 
+    # Assert
     assert [oferta.id for oferta in ofertas] == [1, 2]
     assert [oferta.solucao.value for oferta in ofertas] == ["GD", "Mercado Livre"]

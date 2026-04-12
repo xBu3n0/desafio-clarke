@@ -30,6 +30,7 @@ def make_fornecedor(
 
 
 def test_fornecedor_repository_lists_only_requested_suppliers(tmp_path) -> None:
+    # Arrange
     engine = create_engine_from_url(
         f"sqlite+pysqlite:///{tmp_path / 'repositories.db'}"
     )
@@ -59,6 +60,8 @@ def test_fornecedor_repository_lists_only_requested_suppliers(tmp_path) -> None:
         session.commit()
 
         repository = SqlAlchemyFornecedorSearchRepository(session)
+
+        # Act
         fornecedores = repository.list_by_ids(
             [
                 1,
@@ -66,6 +69,7 @@ def test_fornecedor_repository_lists_only_requested_suppliers(tmp_path) -> None:
             ]
         )
 
+    # Assert
     assert [fornecedor.id for fornecedor in fornecedores] == [1, 3]
     assert [fornecedor.nome for fornecedor in fornecedores] == [
         "Fornecedor A",
@@ -78,6 +82,7 @@ def test_fornecedor_repository_lists_only_requested_suppliers(tmp_path) -> None:
 
 
 def test_fornecedor_repository_returns_total_count(tmp_path) -> None:
+    # Arrange
     engine = create_engine_from_url(
         f"sqlite+pysqlite:///{tmp_path / 'repositories.db'}"
     )
@@ -102,6 +107,9 @@ def test_fornecedor_repository_returns_total_count(tmp_path) -> None:
         session.commit()
 
         repository = SqlAlchemyFornecedorSearchRepository(session)
+
+        # Act
         total = repository.count()
 
+    # Assert
     assert total == 2

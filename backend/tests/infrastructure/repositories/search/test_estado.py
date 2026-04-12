@@ -8,6 +8,7 @@ from app.infrastructure.repositories.search import SqlAlchemyEstadoSearchReposit
 
 
 def test_estado_repository_finds_a_state_by_code(tmp_path) -> None:
+    # Arrange
     engine = create_engine_from_url(
         f"sqlite+pysqlite:///{tmp_path / 'repositories.db'}"
     )
@@ -34,14 +35,18 @@ def test_estado_repository_finds_a_state_by_code(tmp_path) -> None:
         session.commit()
 
         repository = SqlAlchemyEstadoSearchRepository(session)
+
+        # Act
         estado = repository.get_by_sigla("SP")
 
+    # Assert
     assert estado is not None
     assert estado.sigla == "SP"
     assert estado.nome == "Sao Paulo"
 
 
 def test_estado_repository_can_get_by_id_and_list_all(tmp_path) -> None:
+    # Arrange
     engine = create_engine_from_url(
         f"sqlite+pysqlite:///{tmp_path / 'repositories.db'}"
     )
@@ -68,9 +73,14 @@ def test_estado_repository_can_get_by_id_and_list_all(tmp_path) -> None:
         session.commit()
 
         repository = SqlAlchemyEstadoSearchRepository(session)
+
+        # Act
         estado = repository.get_by_id(2)
+
+        # Act
         estados = repository.list_all()
 
+    # Assert
     assert estado is not None
     assert estado.nome == "Parana"
     assert [item.id for item in estados] == [1, 2]
