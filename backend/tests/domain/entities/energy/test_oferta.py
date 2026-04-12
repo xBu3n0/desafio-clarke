@@ -11,6 +11,8 @@ from app.domain.value_objects import (
 
 
 def test_oferta_can_link_a_supplier_to_a_state_solution() -> None:
+    # Arrange
+    # Act
     oferta = Oferta(
         id=OfertaId.create(7),
         estado_id=EstadoId.create(3),
@@ -19,4 +21,5 @@ def test_oferta_can_link_a_supplier_to_a_state_solution() -> None:
         custo_kwh=CustoKwh.create(Decimal("0.41")),
     )
 
+    # Assert
     assert isinstance(oferta, Oferta)

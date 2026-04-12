@@ -42,6 +42,9 @@ from app.domain.value_objects import (
 def test_value_object_keeps_the_same_value_it_receives(
     value_object_class, raw_value
 ) -> None:
+    # Arrange
+    # Act
     value_object = value_object_class.create(raw_value)
 
+    # Assert
     assert value_object.value == raw_value

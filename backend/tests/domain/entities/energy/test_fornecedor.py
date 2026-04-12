@@ -14,6 +14,8 @@ from app.domain.value_objects import (
 
 
 def test_fornecedor_can_be_created_with_a_complete_supplier_profile() -> None:
+    # Arrange
+    # Act
     fornecedor = Fornecedor(
         id=FornecedorId.create(5),
         nome=NomeFornecedor.create("Clarke Energia"),
@@ -27,4 +29,5 @@ def test_fornecedor_can_be_created_with_a_complete_supplier_profile() -> None:
         avaliacao_media=AvaliacaoMedia.create(Decimal("9.0")),
     )
 
+    # Assert
     assert isinstance(fornecedor, Fornecedor)

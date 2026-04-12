@@ -7,14 +7,20 @@ from app.domain.value_objects import ConsumoKwh, CustoKwh
 
 
 def test_custo_kwh_represents_a_valid_energy_price() -> None:
+    # Arrange
+    # Act
     value_object = CustoKwh.create(Decimal("0.52"))
 
+    # Assert
     assert value_object.value == Decimal("0.52")
 
 
 def test_consumo_kwh_represents_a_valid_consumption_amount() -> None:
+    # Arrange
+    # Act
     value_object = ConsumoKwh.create(Decimal("350.00"))
 
+    # Assert
     assert value_object.value == Decimal("350.00")
 
 
@@ -26,8 +32,12 @@ def test_consumo_kwh_represents_a_valid_consumption_amount() -> None:
     ],
 )
 def test_custo_kwh_does_not_allow_free_or_negative_prices(raw_value) -> None:
+    # Arrange
+    # Act
     with pytest.raises(ValidationError):
         CustoKwh.create(raw_value)
+
+    # Assert
 
 
 @pytest.mark.parametrize(
@@ -38,5 +48,9 @@ def test_custo_kwh_does_not_allow_free_or_negative_prices(raw_value) -> None:
     ],
 )
 def test_consumo_kwh_does_not_allow_zero_or_negative_consumption(raw_value) -> None:
+    # Arrange
+    # Act
     with pytest.raises(ValidationError):
         ConsumoKwh.create(raw_value)
+
+    # Assert
