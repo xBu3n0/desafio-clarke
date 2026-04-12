@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import type { RemotePattern } from "next/dist/shared/lib/image-config";
 
 const imageServerPrefix =
   process.env.NEXT_PUBLIC_IMAGE_SERVER_PREFIX ?? "https://minio.localhost/public";
@@ -11,15 +12,17 @@ const imageServerUrl = (() => {
   }
 })();
 
+const imageServerPattern: RemotePattern = {
+  protocol: imageServerUrl.protocol === "http:" ? "http" : "https",
+  hostname: imageServerUrl.hostname,
+  pathname: "/**",
+  ...(imageServerUrl.port ? { port: imageServerUrl.port } : {}),
+};
+
 const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
-      {
-        protocol: imageServerUrl.protocol.replace(":", ""),
-        hostname: imageServerUrl.hostname,
-        port: imageServerUrl.port || undefined,
-        pathname: "/**",
-      },
+      imageServerPattern,
       {
         protocol: "https",
         hostname: "cdn.example.com",
