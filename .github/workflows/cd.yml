@@ -24,12 +24,6 @@ jobs:
         with:
           ref: ${{ github.event.workflow_run.head_sha }}
 
-      - name: Run EC2 deploy
-        run: |
-          cat > /tmp/deploy.env <<'EOF'
-          ${{ secrets.DEPLOY_ENV }}
-          EOF
-
       - name: Deploy to EC2
         env:
           EC2_HOST: ${{ secrets.EC2_HOST }}
@@ -37,6 +31,6 @@ jobs:
           EC2_USER: ${{ secrets.EC2_USER }}
           EC2_SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
           DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
-          DEPLOY_ENV_FILE: /tmp/deploy.env
+          DEPLOY_ENV: ${{ secrets.DEPLOY_ENV }}
           DEPLOY_REF: ${{ github.event.workflow_run.head_branch }}
         run: make deploy-ec2
