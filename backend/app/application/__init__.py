@@ -10,6 +10,7 @@ from .ports import (
     OfertaSearchRepository,
     UnitOfWork,
 )
+from .services import SearchQueryService
 from .use_cases import BuscarOfertasUseCase
 
 __all__ = [
@@ -21,5 +22,6 @@ __all__ = [
     "OfertaSearchRepository",
     "ResultadoBuscaDTO",
     "ResumoSolucaoDTO",
+    "SearchQueryService",
     "UnitOfWork",
 ]

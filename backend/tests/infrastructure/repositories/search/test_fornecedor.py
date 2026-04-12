@@ -13,14 +13,14 @@ def make_fornecedor(
     *,
     fornecedor_id: int,
     nome: str,
-    logo_url: str,
+    logo_path: str,
 ) -> FornecedorModel:
     return FornecedorModel(
         id=fornecedor_id,
         nome=nome,
         logo=LogoModel(
             id=fornecedor_id,
-            url=logo_url,
+            url=logo_path,
         ),
         numero_clientes=1000 + fornecedor_id,
         avaliacao_total=50 + fornecedor_id,
@@ -43,17 +43,17 @@ def test_fornecedor_repository_lists_only_requested_suppliers(tmp_path) -> None:
                 make_fornecedor(
                     fornecedor_id=1,
                     nome="Fornecedor A",
-                    logo_url="https://example.com/a.png",
+                    logo_path="https://example.com/a.png",
                 ),
                 make_fornecedor(
                     fornecedor_id=2,
                     nome="Fornecedor B",
-                    logo_url="https://example.com/b.png",
+                    logo_path="https://example.com/b.png",
                 ),
                 make_fornecedor(
                     fornecedor_id=3,
                     nome="Fornecedor C",
-                    logo_url="https://example.com/c.png",
+                    logo_path="https://example.com/c.png",
                 ),
             ]
         )
@@ -95,12 +95,12 @@ def test_fornecedor_repository_returns_total_count(tmp_path) -> None:
                 make_fornecedor(
                     fornecedor_id=1,
                     nome="Fornecedor A",
-                    logo_url="https://example.com/a.png",
+                    logo_path="https://example.com/a.png",
                 ),
                 make_fornecedor(
                     fornecedor_id=2,
                     nome="Fornecedor B",
-                    logo_url="https://example.com/b.png",
+                    logo_path="https://example.com/b.png",
                 ),
             ]
         )

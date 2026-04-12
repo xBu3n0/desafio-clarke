@@ -4,6 +4,7 @@ from .buscar_ofertas import (
     ResultadoBuscaDTO,
     ResumoSolucaoDTO,
 )
+from .query_views import OfertaComFornecedorSearchDTO
 from .read_models import (
     EstadoSearchDTO,
     FornecedorSearchDTO,
@@ -18,6 +19,7 @@ __all__ = [
     "FornecedorSearchDTO",
     "LogoSearchDTO",
     "OfertaSearchDTO",
+    "OfertaComFornecedorSearchDTO",
     "ResultadoBuscaDTO",
     "ResumoSolucaoDTO",
 ]

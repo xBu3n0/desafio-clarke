@@ -13,7 +13,7 @@ class BuscarOfertasCommand:
 class ComparacaoFornecedorDTO:
     fornecedor_id: int
     fornecedor_nome: str
-    logo_url: str
+    logo_path: str
     custo_kwh: str
     custo_mensal: str
     economia: str
@@ -25,7 +25,7 @@ class ComparacaoFornecedorDTO:
         return {
             "fornecedor_id": self.fornecedor_id,
             "fornecedor_nome": self.fornecedor_nome,
-            "logo_url": self.logo_url,
+            "logo_path": self.logo_path,
             "custo_kwh": self.custo_kwh,
             "custo_mensal": self.custo_mensal,
             "economia": self.economia,

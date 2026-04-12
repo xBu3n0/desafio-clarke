@@ -146,7 +146,7 @@ class BuscarOfertasUseCase:
                     ComparacaoFornecedorDTO(
                         fornecedor_id=fornecedor.id,
                         fornecedor_nome=fornecedor.nome,
-                        logo_url=fornecedor.logo.url,
+                        logo_path=fornecedor.logo.url,
                         custo_kwh=self._format_decimal(oferta.custo_kwh),
                         custo_mensal=self._format_decimal(custo_mensal),
                         economia=self._format_decimal(economia),

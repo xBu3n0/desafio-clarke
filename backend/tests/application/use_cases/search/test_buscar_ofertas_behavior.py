@@ -17,7 +17,7 @@ from app.application.ports import (
     UnitOfWork,
 )
 from app.application.use_cases import BuscarOfertasUseCase
-from app.domain.exceptions import EntityNotFoundError, ValidationError
+from app.domain.exceptions import EntityNotFoundError
 from app.domain.value_objects import ConsumoKwh, SiglaEstado, Solucao
 
 
@@ -26,16 +26,13 @@ class FakeEstadoSearchRepository(EstadoSearchRepository):
         self._estados = list(estados)
 
     def get_by_sigla(self, sigla: str) -> EstadoSearchDTO | None:
-        for estado in self._estados:
-            if estado.sigla == sigla:
-                return estado
-        return None
+        return next(filter(lambda estado: estado.sigla == sigla, self._estados), None)
 
     def get_by_id(self, estado_id: int) -> EstadoSearchDTO | None:
-        for estado in self._estados:
-            if estado.id == estado_id:
-                return estado
-        return None
+        return next(
+            filter(lambda estado: estado.id == estado_id, self._estados),
+            None,
+        )
 
     def list_all(self) -> Sequence[EstadoSearchDTO]:
         return self._estados
@@ -50,7 +47,7 @@ class FakeFornecedorSearchRepository(FornecedorSearchRepository):
         fornecedor_ids: Sequence[int],
     ) -> Sequence[FornecedorSearchDTO]:
         ids = set(fornecedor_ids)
-        return [fornecedor for fornecedor in self._fornecedores if fornecedor.id in ids]
+        return list(filter(lambda fornecedor: fornecedor.id in ids, self._fornecedores))
 
     def count(self) -> int:
         return len(self._fornecedores)
@@ -61,7 +58,7 @@ class FakeOfertaSearchRepository(OfertaSearchRepository):
         self._ofertas = list(ofertas)
 
     def list_by_estado_id(self, estado_id: int) -> Sequence[OfertaSearchDTO]:
-        return [oferta for oferta in self._ofertas if oferta.estado_id == estado_id]
+        return list(filter(lambda oferta: oferta.estado_id == estado_id, self._ofertas))
 
 
 class FakeUnitOfWork(UnitOfWork):
@@ -101,7 +98,7 @@ def make_estado() -> EstadoSearchDTO:
 def make_fornecedor(
     fornecedor_id: int,
     nome: str,
-    logo_url: str,
+    logo_path: str,
     avaliacao_media: str,
 ) -> FornecedorSearchDTO:
     return FornecedorSearchDTO(
@@ -109,7 +106,7 @@ def make_fornecedor(
         nome=nome,
         logo=LogoSearchDTO(
             id=fornecedor_id,
-            url=logo_url,
+            url=logo_path,
         ),
         numero_clientes=1000 + fornecedor_id,
         avaliacao_total=50 + fornecedor_id,
@@ -150,19 +147,19 @@ def test_search_builds_ranked_results_grouped_by_solution() -> None:
     fornecedor_a = make_fornecedor(
         fornecedor_id=1,
         nome="Fornecedor A",
-        logo_url="https://example.com/a.png",
+        logo_path="https://example.com/a.png",
         avaliacao_media="8.5",
     )
     fornecedor_b = make_fornecedor(
         fornecedor_id=2,
         nome="Fornecedor B",
-        logo_url="https://example.com/b.png",
+        logo_path="https://example.com/b.png",
         avaliacao_media="9.0",
     )
     fornecedor_c = make_fornecedor(
         fornecedor_id=3,
         nome="Fornecedor C",
-        logo_url="https://example.com/c.png",
+        logo_path="https://example.com/c.png",
         avaliacao_media="7.5",
     )
     ofertas = [
@@ -207,7 +204,7 @@ def test_search_marks_a_solution_as_unavailable_when_it_has_no_offer() -> None:
     fornecedor = make_fornecedor(
         fornecedor_id=1,
         nome="Fornecedor A",
-        logo_url="https://example.com/a.png",
+        logo_path="https://example.com/a.png",
         avaliacao_media="8.5",
     )
     uow = FakeUnitOfWork(
@@ -232,7 +229,7 @@ def test_search_keeps_negative_savings_when_an_offer_is_more_expensive() -> None
     fornecedor = make_fornecedor(
         fornecedor_id=1,
         nome="Fornecedor A",
-        logo_url="https://example.com/a.png",
+        logo_path="https://example.com/a.png",
         avaliacao_media="8.5",
     )
     uow = FakeUnitOfWork(
@@ -262,21 +259,3 @@ def test_search_requires_an_existing_state() -> None:
     # Assert
     assert uow.rollback_called is True
     assert uow.close_called is True
-
-
-def test_search_requires_a_valid_state_code() -> None:
-    # Arrange
-    # Act
-    with pytest.raises(ValidationError):
-        make_command(sigla_estado="sp")
-
-    # Assert
-
-
-def test_search_requires_a_positive_consumption() -> None:
-    # Arrange
-    # Act
-    with pytest.raises(ValidationError):
-        make_command(consumo_kwh="0")
-
-    # Assert

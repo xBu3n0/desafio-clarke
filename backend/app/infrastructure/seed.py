@@ -22,7 +22,7 @@ class FornecedorSeed:
     id: int
     nome: str
     logo_id: int
-    logo_url: str
+    logo_path: str
     numero_clientes: int
     avaliacao_total: int
     numero_avaliacoes: int
@@ -49,7 +49,7 @@ FORNECEDORES: tuple[FornecedorSeed, ...] = (
         id=1,
         nome="Lumen Energia",
         logo_id=1,
-        logo_url="https://cdn.example.com/logos/lumen.png",
+        logo_path="logos/lumen.svg",
         numero_clientes=14300,
         avaliacao_total=4130,
         numero_avaliacoes=500,
@@ -59,7 +59,7 @@ FORNECEDORES: tuple[FornecedorSeed, ...] = (
         id=2,
         nome="Aurora Power",
         logo_id=2,
-        logo_url="https://cdn.example.com/logos/aurora.png",
+        logo_path="logos/aurora.svg",
         numero_clientes=9200,
         avaliacao_total=3720,
         numero_avaliacoes=450,
@@ -69,7 +69,7 @@ FORNECEDORES: tuple[FornecedorSeed, ...] = (
         id=3,
         nome="Brisa Livre",
         logo_id=3,
-        logo_url="https://cdn.example.com/logos/brisa.png",
+        logo_path="logos/brisa.svg",
         numero_clientes=7200,
         avaliacao_total=2840,
         numero_avaliacoes=350,
@@ -79,7 +79,7 @@ FORNECEDORES: tuple[FornecedorSeed, ...] = (
         id=4,
         nome="Nexa Solar",
         logo_id=4,
-        logo_url="https://cdn.example.com/logos/nexa.png",
+        logo_path="logos/nexa.svg",
         numero_clientes=5100,
         avaliacao_total=2260,
         numero_avaliacoes=280,
@@ -113,6 +113,23 @@ def get_database_url() -> str:
     return database_url
 
 
+def get_public_assets_base_url() -> str:
+    public_assets_base_url = os.getenv("PUBLIC_ASSETS_BASE_URL")
+    if public_assets_base_url:
+        return public_assets_base_url.rstrip("/")
+
+    minio_public_endpoint = os.getenv("MINIO_PUBLIC_ENDPOINT")
+    minio_bucket_name = os.getenv("MINIO_BUCKET_NAME", "public")
+    if minio_public_endpoint:
+        return f"{minio_public_endpoint.rstrip('/')}/{minio_bucket_name}"
+
+    return "https://cdn.example.com"
+
+
+def build_logo_path(base_url: str, logo_path: str) -> str:
+    return f"{base_url}/{logo_path.lstrip('/')}"
+
+
 def seed_states(session) -> None:
     for estado_seed in ESTADOS:
         estado = session.execute(
@@ -134,7 +151,9 @@ def seed_states(session) -> None:
 
 
 def seed_suppliers(session) -> None:
+    public_assets_base_url = get_public_assets_base_url()
     for fornecedor_seed in FORNECEDORES:
+        logo_path = build_logo_path(public_assets_base_url, fornecedor_seed.logo_path)
         fornecedor = session.get(FornecedorModel, fornecedor_seed.id)
         if fornecedor is None:
             session.add(
@@ -143,7 +162,7 @@ def seed_suppliers(session) -> None:
                     nome=fornecedor_seed.nome,
                     logo=LogoModel(
                         id=fornecedor_seed.logo_id,
-                        url=fornecedor_seed.logo_url,
+                        url=logo_path,
                     ),
                     numero_clientes=fornecedor_seed.numero_clientes,
                     avaliacao_total=fornecedor_seed.avaliacao_total,
@@ -162,10 +181,10 @@ def seed_suppliers(session) -> None:
         if fornecedor.logo is None:
             fornecedor.logo = LogoModel(
                 id=fornecedor_seed.logo_id,
-                url=fornecedor_seed.logo_url,
+                url=logo_path,
             )
         else:
-            fornecedor.logo.url = fornecedor_seed.logo_url
+            fornecedor.logo.url = logo_path
 
 
 def seed_offers(session) -> None:
