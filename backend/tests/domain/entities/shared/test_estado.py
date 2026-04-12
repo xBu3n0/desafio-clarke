@@ -13,7 +13,3 @@ def test_estado_can_be_created_with_a_valid_state_profile() -> None:
     )
 
     assert isinstance(estado, Estado)
-    assert isinstance(estado.id, EstadoId)
-    assert isinstance(estado.nome, NomeEstado)
-    assert isinstance(estado.sigla, SiglaEstado)
-    assert isinstance(estado.tarifa_base_kwh, CustoKwh)

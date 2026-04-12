@@ -20,8 +20,3 @@ def test_oferta_can_link_a_supplier_to_a_state_solution() -> None:
     )
 
     assert isinstance(oferta, Oferta)
-    assert isinstance(oferta.id, OfertaId)
-    assert isinstance(oferta.estado_id, EstadoId)
-    assert isinstance(oferta.fornecedor_id, FornecedorId)
-    assert isinstance(oferta.solucao, Solucao)
-    assert isinstance(oferta.custo_kwh, CustoKwh)

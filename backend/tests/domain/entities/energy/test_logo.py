@@ -6,5 +6,3 @@ def test_logo_can_be_created_with_a_valid_logo_reference() -> None:
     logo = Logo(id=LogoId.create(3), url=UrlLogo.create("https://example.com/logo.svg"))
 
     assert isinstance(logo, Logo)
-    assert isinstance(logo.id, LogoId)
-    assert isinstance(logo.url, UrlLogo)

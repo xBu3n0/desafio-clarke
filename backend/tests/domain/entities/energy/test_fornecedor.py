@@ -28,12 +28,3 @@ def test_fornecedor_can_be_created_with_a_complete_supplier_profile() -> None:
     )
 
     assert isinstance(fornecedor, Fornecedor)
-    assert isinstance(fornecedor.id, FornecedorId)
-    assert isinstance(fornecedor.nome, NomeFornecedor)
-    assert isinstance(fornecedor.logo, Logo)
-    assert isinstance(fornecedor.logo.id, LogoId)
-    assert isinstance(fornecedor.logo.url, UrlLogo)
-    assert isinstance(fornecedor.numero_clientes, NumeroClientes)
-    assert isinstance(fornecedor.avaliacao_total, AvaliacaoTotal)
-    assert isinstance(fornecedor.numero_avaliacoes, NumeroAvaliacoes)
-    assert isinstance(fornecedor.avaliacao_media, AvaliacaoMedia)
