@@ -1,5 +1,5 @@
 import os
-from decimal import Decimal, InvalidOperation
+from decimal import Decimal
 
 from app.domain.exceptions import EntityNotFoundError, ValidationError
 from app.domain.value_objects import (
@@ -18,8 +18,9 @@ from app.domain.value_objects import (
 )
 from app.infrastructure.database import create_engine_from_url, create_session_factory
 from app.infrastructure.unit_of_work import SqlAlchemyUnitOfWork
+from app.interfaces.shared import format_decimal, parse_decimal, parse_positive_int
 
-from .types import EstadoType, FornecedorType, LogoType, OfertaType, format_decimal
+from .types import EstadoType, FornecedorType, LogoType, OfertaType
 
 
 def get_database_url() -> str:
@@ -36,21 +37,6 @@ def resolve_solucao(value: str) -> Solucao:
     except ValidationError:
         msg = "solucao must be 'GD' or 'Mercado Livre'"
         raise ValueError(msg) from None
-
-
-def parse_positive_int(value: int, field_name: str) -> int:
-    if value <= 0:
-        msg = f"{field_name} must be greater than 0"
-        raise ValueError(msg)
-    return value
-
-
-def parse_decimal(value: str, field_name: str) -> Decimal:
-    try:
-        return Decimal(value)
-    except InvalidOperation as exc:
-        msg = f"{field_name} must be a valid decimal"
-        raise ValueError(msg) from exc
 
 
 def validate_estado_id(value: int) -> int:

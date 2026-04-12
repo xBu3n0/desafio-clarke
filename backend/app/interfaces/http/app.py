@@ -1,4 +1,8 @@
+import os
+from collections.abc import Callable
+
 from flask import Flask, jsonify
+from sqlalchemy.orm import Session
 from werkzeug.exceptions import HTTPException
 
 from app.domain.exceptions import (
@@ -7,13 +11,34 @@ from app.domain.exceptions import (
     EntityNotFoundError,
     ValidationError,
 )
+from app.infrastructure.database import create_engine_from_url, create_session_factory
 
 from .controller import create_api_blueprint
 
 
-def create_app() -> Flask:
+def _build_session_provider() -> Callable[[], Session]:
+    session_factory = None
+
+    def session_provider() -> Session:
+        nonlocal session_factory
+        if session_factory is None:
+            database_url = os.getenv("DATABASE_URL")
+            if not database_url:
+                msg = "DATABASE_URL is required"
+                raise RuntimeError(msg)
+            engine = create_engine_from_url(database_url)
+            session_factory = create_session_factory(engine)
+        return session_factory()
+
+    return session_provider
+
+
+def create_app(session_provider: Callable[[], Session] | None = None) -> Flask:
     app = Flask(__name__)
-    app.register_blueprint(create_api_blueprint())
+    resolved_session_provider = session_provider or _build_session_provider()
+    app.register_blueprint(
+        create_api_blueprint(session_provider=resolved_session_provider)
+    )
     register_error_handlers(app)
     return app
 

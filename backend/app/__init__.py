@@ -1,7 +1,7 @@
-def create_app():
+def create_app(*args, **kwargs):
     from .interfaces.http.app import create_app as http_create_app
 
-    return http_create_app()
+    return http_create_app(*args, **kwargs)
 
 
 def register_error_handlers(app):

@@ -1,10 +1,4 @@
-from decimal import Decimal
-
 import strawberry
-
-
-def format_decimal(value: Decimal, places: int) -> str:
-    return f"{value:.{places}f}"
 
 
 @strawberry.type(name="HealthStatus")
