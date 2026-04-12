@@ -1,14 +1,6 @@
-from flask import Flask, Blueprint, jsonify
+from app.interfaces.http.app import create_app
 
-app = Flask(__name__)
-
-bp = Blueprint('search', __name__, url_prefix="/api/v1")
-
-@bp.get("health")
-def health():
-    return jsonify({"status": "ok"})
-
-app.register_blueprint(bp)
+app = create_app()
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0")

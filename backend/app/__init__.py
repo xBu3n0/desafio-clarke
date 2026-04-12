@@ -5,7 +5,9 @@ def create_app():
 
 
 def register_error_handlers(app):
-    from .interfaces.http.app import register_error_handlers as http_register_error_handlers
+    from .interfaces.http.app import (
+        register_error_handlers as http_register_error_handlers,
+    )
 
     return http_register_error_handlers(app)
 
