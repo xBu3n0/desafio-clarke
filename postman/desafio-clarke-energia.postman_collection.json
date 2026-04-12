@@ -1,0 +1,212 @@
+{
+  "info": {
+    "name": "Desafio Clarke Energia APIs",
+    "description": "Collection to test REST and GraphQL endpoints from desafio-clarke-energia.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost/api/v1" },
+    { "key": "estadoId", "value": "1" },
+    { "key": "page", "value": "1" },
+    { "key": "perPage", "value": "2" },
+    { "key": "estadoNome", "value": "Bahia" },
+    { "key": "estadoSigla", "value": "BA" },
+    { "key": "tarifaBaseKwh", "value": "0.55" },
+    { "key": "fornecedorId", "value": "1" },
+    { "key": "fornecedorNome", "value": "Nova Energia" },
+    { "key": "fornecedorLogoUrl", "value": "https://example.com/nova.png" },
+    { "key": "numeroClientes", "value": "100" },
+    { "key": "avaliacaoTotal", "value": "80" },
+    { "key": "numeroAvaliacoes", "value": "10" },
+    { "key": "avaliacaoMedia", "value": "8.0" },
+    { "key": "solucao", "value": "GD" },
+    { "key": "custoKwh", "value": "0.40" }
+  ],
+  "item": [
+    {
+      "name": "REST API",
+      "item": [
+        {
+          "name": "Health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/health"
+          },
+          "response": []
+        },
+        {
+          "name": "Ofertas por Estado",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/estados/{{estadoId}}?page={{page}}&per_page={{perPage}}"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "GraphQL API",
+      "item": [
+        {
+          "name": "GraphQL Info",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/graphql"
+          },
+          "response": []
+        },
+        {
+          "name": "Query Health",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"query { health { status } }\"\n}"
+            },
+            "url": "{{baseUrl}}/graphql"
+          },
+          "response": []
+        },
+        {
+          "name": "Query Estados",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"query { estados { id nome sigla tarifaBaseKwh } }\"\n}"
+            },
+            "url": "{{baseUrl}}/graphql"
+          },
+          "response": []
+        },
+        {
+          "name": "Query Estado por ID",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"query ($estadoId: Int!) { estado(estadoId: $estadoId) { id nome sigla tarifaBaseKwh } }\",\n  \"variables\": {\n    \"estadoId\": {{estadoId}}\n  }\n}"
+            },
+            "url": "{{baseUrl}}/graphql"
+          },
+          "response": []
+        },
+        {
+          "name": "Query Ofertas por Estado",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"query ($estadoId: Int!, $page: Int!, $perPage: Int!) { ofertasPorEstado(estadoId: $estadoId, page: $page, perPage: $perPage) { id estadoId fornecedorId solucao custoKwh fornecedor { id nome avaliacaoMedia logo { id url } } } }\",\n  \"variables\": {\n    \"estadoId\": {{estadoId}},\n    \"page\": {{page}},\n    \"perPage\": {{perPage}}\n  }\n}"
+            },
+            "url": "{{baseUrl}}/graphql"
+          },
+          "response": []
+        },
+        {
+          "name": "Mutation Create Estado",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.data && json.data.createEstado) {",
+                  "  pm.collectionVariables.set('estadoId', String(json.data.createEstado.id));",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"mutation ($nome: String!, $sigla: String!, $tarifaBaseKwh: String!) { createEstado(nome: $nome, sigla: $sigla, tarifaBaseKwh: $tarifaBaseKwh) { id nome sigla tarifaBaseKwh } }\",\n  \"variables\": {\n    \"nome\": \"{{estadoNome}}\",\n    \"sigla\": \"{{estadoSigla}}\",\n    \"tarifaBaseKwh\": \"{{tarifaBaseKwh}}\"\n  }\n}"
+            },
+            "url": "{{baseUrl}}/graphql"
+          },
+          "response": []
+        },
+        {
+          "name": "Mutation Create Fornecedor",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.data && json.data.createFornecedor) {",
+                  "  pm.collectionVariables.set('fornecedorId', String(json.data.createFornecedor.id));",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"mutation ($nome: String!, $logoUrl: String!, $numeroClientes: Int!, $avaliacaoTotal: Int!, $numeroAvaliacoes: Int!, $avaliacaoMedia: String!) { createFornecedor(nome: $nome, logoUrl: $logoUrl, numeroClientes: $numeroClientes, avaliacaoTotal: $avaliacaoTotal, numeroAvaliacoes: $numeroAvaliacoes, avaliacaoMedia: $avaliacaoMedia) { id nome avaliacaoMedia logo { id url } } }\",\n  \"variables\": {\n    \"nome\": \"{{fornecedorNome}}\",\n    \"logoUrl\": \"{{fornecedorLogoUrl}}\",\n    \"numeroClientes\": {{numeroClientes}},\n    \"avaliacaoTotal\": {{avaliacaoTotal}},\n    \"numeroAvaliacoes\": {{numeroAvaliacoes}},\n    \"avaliacaoMedia\": \"{{avaliacaoMedia}}\"\n  }\n}"
+            },
+            "url": "{{baseUrl}}/graphql"
+          },
+          "response": []
+        },
+        {
+          "name": "Mutation Create Oferta",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"mutation ($estadoId: Int!, $fornecedorId: Int!, $solucao: String!, $custoKwh: String!) { createOferta(estadoId: $estadoId, fornecedorId: $fornecedorId, solucao: $solucao, custoKwh: $custoKwh) { id estadoId fornecedorId solucao custoKwh fornecedor { id nome logo { id url } } } }\",\n  \"variables\": {\n    \"estadoId\": {{estadoId}},\n    \"fornecedorId\": {{fornecedorId}},\n    \"solucao\": \"{{solucao}}\",\n    \"custoKwh\": \"{{custoKwh}}\"\n  }\n}"
+            },
+            "url": "{{baseUrl}}/graphql"
+          },
+          "response": []
+        },
+        {
+          "name": "Mutation Run Seed",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"mutation { runSeed }\"\n}"
+            },
+            "url": "{{baseUrl}}/graphql"
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
