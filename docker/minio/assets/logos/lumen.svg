@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="320" viewBox="0 0 320 320" role="img" aria-label="Lumen Energia logo">
+  <rect width="320" height="320" rx="32" fill="#0f172a"/>
+  <circle cx="160" cy="160" r="86" fill="#f59e0b"/>
+  <path d="M160 74l18 64h64l-52 40 20 68-50-42-50 42 20-68-52-40h64z" fill="#111827"/>
+</svg>

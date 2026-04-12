@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="320" viewBox="0 0 320 320" role="img" aria-label="Nexa Solar logo">
+  <rect width="320" height="320" rx="32" fill="#3f0a2a"/>
+  <circle cx="160" cy="122" r="54" fill="#fb7185"/>
+  <rect x="70" y="190" width="180" height="56" rx="14" fill="#fecdd3"/>
+  <path d="M102 206h116l-18 24h-80z" fill="#9f1239"/>
+</svg>
