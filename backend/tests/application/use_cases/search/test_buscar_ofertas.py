@@ -145,6 +145,7 @@ def make_command(
 
 
 def test_search_builds_ranked_results_grouped_by_solution() -> None:
+    # Arrange
     estado = make_estado()
     fornecedor_a = make_fornecedor(
         fornecedor_id=1,
@@ -176,8 +177,10 @@ def test_search_builds_ranked_results_grouped_by_solution() -> None:
     )
     use_case = BuscarOfertasUseCase(lambda: uow)
 
+    # Act
     result = use_case.execute(make_command())
 
+    # Assert
     assert result.estado_sigla == "SP"
     assert result.custo_base == "500.00"
     assert [solucao.solucao for solucao in result.solucoes] == ["GD", "Mercado Livre"]
@@ -199,6 +202,7 @@ def test_search_builds_ranked_results_grouped_by_solution() -> None:
 
 
 def test_search_marks_a_solution_as_unavailable_when_it_has_no_offer() -> None:
+    # Arrange
     estado = make_estado()
     fornecedor = make_fornecedor(
         fornecedor_id=1,
@@ -213,14 +217,17 @@ def test_search_marks_a_solution_as_unavailable_when_it_has_no_offer() -> None:
     )
     use_case = BuscarOfertasUseCase(lambda: uow)
 
+    # Act
     result = use_case.execute(make_command())
 
+    # Assert
     mercado_livre = result.solucoes[1]
     assert mercado_livre.solucao == "Mercado Livre"
     assert mercado_livre.fornecedores == []
 
 
 def test_search_keeps_negative_savings_when_an_offer_is_more_expensive() -> None:
+    # Arrange
     estado = make_estado()
     fornecedor = make_fornecedor(
         fornecedor_id=1,
@@ -235,28 +242,41 @@ def test_search_keeps_negative_savings_when_an_offer_is_more_expensive() -> None
     )
     use_case = BuscarOfertasUseCase(lambda: uow)
 
+    # Act
     result = use_case.execute(make_command())
 
+    # Assert
     gd = result.solucoes[0]
     assert gd.fornecedores[0].economia == "-50.00"
 
 
 def test_search_requires_an_existing_state() -> None:
+    # Arrange
     uow = FakeUnitOfWork(estados=[], fornecedores=[], ofertas=[])
     use_case = BuscarOfertasUseCase(lambda: uow)
 
+    # Act
     with pytest.raises(EntityNotFoundError):
         use_case.execute(make_command())
 
+    # Assert
     assert uow.rollback_called is True
     assert uow.close_called is True
 
 
 def test_search_requires_a_valid_state_code() -> None:
+    # Arrange
+    # Act
     with pytest.raises(ValidationError):
         make_command(sigla_estado="sp")
 
+    # Assert
+
 
 def test_search_requires_a_positive_consumption() -> None:
+    # Arrange
+    # Act
     with pytest.raises(ValidationError):
         make_command(consumo_kwh="0")
+
+    # Assert
