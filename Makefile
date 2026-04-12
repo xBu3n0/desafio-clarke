@@ -42,14 +42,16 @@ deploy-ec2:
 	@: "$${EC2_USER:?EC2_USER is required}"
 	@: "$${EC2_SSH_PRIVATE_KEY:?EC2_SSH_PRIVATE_KEY is required}"
 	@: "$${DEPLOY_PATH:?DEPLOY_PATH is required}"
-	@: "$${DEPLOY_ENV_B64:?DEPLOY_ENV_B64 is required}"
+	@: "$${DEPLOY_ENV_FILE:?DEPLOY_ENV_FILE is required}"
+	@set -euo pipefail; \
 	KEY_FILE="$$(mktemp)"; \
-	ENV_FILE="$$(mktemp)"; \
 	EC2_PORT_VALUE="$${EC2_PORT:-22}"; \
+	trap 'rm -f "$$KEY_FILE"' EXIT; \
 	printf "%s" "$$EC2_SSH_PRIVATE_KEY" > "$$KEY_FILE"; \
 	chmod 600 "$$KEY_FILE"; \
-	printf "%s" "$$DEPLOY_ENV_B64" | base64 -d > "$$ENV_FILE"; \
-	scp -P "$$EC2_PORT_VALUE" -o StrictHostKeyChecking=no -i "$$KEY_FILE" "$$ENV_FILE" "$$EC2_USER@$$EC2_HOST:$$DEPLOY_PATH/.env"; \
+	test -f "$$DEPLOY_ENV_FILE"; \
 	ssh -p "$$EC2_PORT_VALUE" -o StrictHostKeyChecking=no -i "$$KEY_FILE" "$$EC2_USER@$$EC2_HOST" \
-		"set -euo pipefail; cd '$$DEPLOY_PATH'; git fetch --all --prune; git checkout '$$DEPLOY_REF'; git pull --ff-only origin '$$DEPLOY_REF'; docker compose --env-file .env -f compose.yml up -d --build --remove-orphans"; \
-	rm -f "$$KEY_FILE" "$$ENV_FILE"
+		"mkdir -p '$$DEPLOY_PATH'"; \
+	scp -P "$$EC2_PORT_VALUE" -o StrictHostKeyChecking=no -i "$$KEY_FILE" "$$DEPLOY_ENV_FILE" "$$EC2_USER@$$EC2_HOST:$$DEPLOY_PATH/.env"; \
+	ssh -p "$$EC2_PORT_VALUE" -o StrictHostKeyChecking=no -i "$$KEY_FILE" "$$EC2_USER@$$EC2_HOST" \
+		"set -euo pipefail; cd '$$DEPLOY_PATH'; git fetch --all --prune; git checkout '$$DEPLOY_REF'; git pull --ff-only origin '$$DEPLOY_REF'; docker compose --env-file .env -f compose.yml up -d --build --remove-orphans"
