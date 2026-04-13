@@ -167,7 +167,7 @@ Use `.env` apenas se quiser sobrescrever variáveis (principalmente `SERVER_NAME
 | `frontend/` | Aplicação web Next.js |
 | `backend/` | API Flask + domínio + infraestrutura |
 | `nginx/` | Configuração de roteamento e TLS |
-| `docker/` | Dockerfiles e configs de serviços auxiliares |
+| `docker/` | Dockerfiles e configs de serviços |
 | `scripts/` | Atalhos de execução/build/recriação/cobertura |
 | `compose.yml` | Stack de produção local |
 | `compose.dev.yml` | Stack de desenvolvimento local |

@@ -32,6 +32,20 @@ const APP_COMPONENTS = [
   },
 ] as const;
 
+const CREDENTIALS_BY_LABEL: Record<
+  string,
+  { username: string; password: string } | undefined
+> = {
+  "MinIO Console": {
+    username: "minioadmin",
+    password: "minioadmin",
+  },
+  "Grafana": {
+    username: "admin",
+    password: "admin",
+  },
+};
+
 export function HeroSection() {
   return (
     <section className="grid gap-3 border border-(--line) bg-(--panel) p-6">
@@ -91,6 +105,7 @@ export function HeroSection() {
                   href={link.href}
                   description={link.description}
                   icon={link.icon}
+                  credentials={CREDENTIALS_BY_LABEL[link.label]}
                 />
               ))}
             </div>

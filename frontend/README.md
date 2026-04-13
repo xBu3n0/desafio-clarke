@@ -9,6 +9,7 @@ Frontend do desafio Clarke Energia implementado com **Next.js + React + TypeScri
 - [Fluxo funcional implementado](#fluxo-funcional-implementado)
 - [Contratos consumidos](#contratos-consumidos)
 - [Variáveis de ambiente principais](#variáveis-de-ambiente-principais)
+- [Acesso a serviços](#acesso-a-serviços)
 - [Executar localmente (isolado)](#executar-localmente-isolado)
 - [Build e qualidade](#build-e-qualidade)
 
@@ -70,6 +71,20 @@ Frontend do desafio Clarke Energia implementado com **Next.js + React + TypeScri
 | `NEXT_PUBLIC_API_URL` | Base pública da API consumida no browser |
 | `NEXT_PUBLIC_SERVER_NAME` | Montagem de links da plataforma (`web.*`, `api.*`, etc.) |
 | `NEXT_PUBLIC_IMAGE_SERVER_PREFIX` | Prefixo para resolver logos/imagens |
+
+---
+
+## Acesso a serviços
+
+Credenciais padrão configuradas no projeto (ambiente local/padrão):
+
+| Serviço | URL (com `SERVER_NAME=mbueno.xyz`) | Usuário | Senha |
+| --- | --- | --- | --- |
+| Grafana | `https://grafana.mbueno.xyz` | `admin` | `admin` |
+| MinIO Console | `https://minio-console.mbueno.xyz` | `minioadmin` | `minioadmin` |
+| MinIO API | `https://minio.mbueno.xyz` | `minioadmin` | `minioadmin` |
+
+As credenciais podem ser sobrescritas via `.env` (ex.: `GRAFANA_ADMIN_USER`, `GRAFANA_ADMIN_PASSWORD`, `MINIO_ROOT_USER`, `MINIO_ROOT_PASSWORD`).
 
 ---
 

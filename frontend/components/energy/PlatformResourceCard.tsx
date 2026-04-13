@@ -5,6 +5,10 @@ type PlatformResourceCardProps = {
   href: string;
   description: string;
   icon: LucideIcon;
+  credentials?: {
+    username: string;
+    password: string;
+  };
 };
 
 export function PlatformResourceCard({
@@ -12,6 +16,7 @@ export function PlatformResourceCard({
   href,
   description,
   icon: Icon,
+  credentials,
 }: PlatformResourceCardProps) {
   return (
     <article className="border border-(--line) bg-(--panel) p-3">
@@ -22,6 +27,17 @@ export function PlatformResourceCard({
           <p className="m-0 text-sm text-(--muted)">{description}</p>
         </div>
       </div>
+      {credentials ? (
+        <div className="mt-2 flex flex-wrap items-center gap-1.5 text-xs text-(--muted)">
+          <span>Credenciais:</span>
+          <span className="border border-(--line) bg-(--bg) px-1.5 py-0.5">
+            Usuário: <strong>{credentials.username}</strong>
+          </span>
+          <span className="border border-(--line) bg-(--bg) px-1.5 py-0.5">
+            Senha: <strong>{credentials.password}</strong>
+          </span>
+        </div>
+      ) : null}
       <a
         href={href}
         target="_blank"
