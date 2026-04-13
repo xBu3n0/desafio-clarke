@@ -1,36 +1,93 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Frontend
 
-## Getting Started
+Frontend do desafio Clarke Energia implementado com **Next.js + React + TypeScript**, responsável por consulta de estados/ofertas e comparação de custos/economia na interface.
 
-First, run the development server:
+## Sumário
+
+- [Visão geral](#visão-geral)
+- [Estrutura principal](#estrutura-principal)
+- [Fluxo funcional implementado](#fluxo-funcional-implementado)
+- [Contratos consumidos](#contratos-consumidos)
+- [Variáveis de ambiente principais](#variáveis-de-ambiente-principais)
+- [Executar localmente (isolado)](#executar-localmente-isolado)
+- [Build e qualidade](#build-e-qualidade)
+
+---
+
+## Visão geral
+
+| Item | Detalhe |
+| --- | --- |
+| Stack | Next.js (App Router), React, TypeScript |
+| UI | Componentes próprios (`components/`) |
+| Integração | REST e GraphQL no backend |
+| Testes | Jest + Testing Library |
+| Build/Run | Node + npm |
+
+---
+
+## Estrutura principal
+
+| Caminho | Responsabilidade |
+| --- | --- |
+| `app/` | Página principal e entrypoint da aplicação |
+| `components/energy/` | Blocos de tela (hero, busca, resultados) |
+| `components/layout/` | Navbar e componentes estruturais |
+| `lib/clients/` | Cliente HTTP e normalização de payload REST/GraphQL |
+| `lib/hooks/` | Estado da consulta e orquestração do fluxo |
+| `lib/energy/` | Regras de comparação no cliente (custo/economia/percentual) |
+| `lib/constants/` | Links e constantes da plataforma |
+| `test/` | Utilitários de teste frontend |
+
+---
+
+## Fluxo funcional implementado
+
+| Etapa | Comportamento |
+| --- | --- |
+| Carregar estados | Busca estados via REST ou GraphQL |
+| Selecionar estado e consumo | Form com validação de entrada |
+| Consultar ofertas | Busca ofertas por `estado_id` |
+| Comparar resultados | Calcula custo base, custo por fornecedor, economia e percentual no cliente |
+| Exibir por solução | Agrupa em `GD` e `Mercado Livre`, com ordenação por economia |
+
+---
+
+## Contratos consumidos
+
+| Fonte | Operação |
+| --- | --- |
+| REST | `GET /api/v1/estados` |
+| REST | `GET /api/v1/estados/{estado_id}?page=1&per_page=100` |
+| GraphQL | `POST /api/v1/graphql` (`estados`, `ofertasPorEstado`) |
+
+---
+
+## Variáveis de ambiente principais
+
+| Variável | Uso |
+| --- | --- |
+| `NEXT_PUBLIC_API_URL` | Base pública da API consumida no browser |
+| `NEXT_PUBLIC_SERVER_NAME` | Montagem de links da plataforma (`web.*`, `api.*`, etc.) |
+| `NEXT_PUBLIC_IMAGE_SERVER_PREFIX` | Prefixo para resolver logos/imagens |
+
+---
+
+## Executar localmente (isolado)
 
 ```bash
+cd frontend
+npm ci
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Build e qualidade
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+cd frontend
+npm run build
+npm run lint
+npm run test
+```

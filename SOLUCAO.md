@@ -1,5 +1,19 @@
 # Contexto do Problema
 
+## Sumário
+
+- [Contexto do Problema](#contexto-do-problema)
+- [Objetivo do Produto](#objetivo-do-produto)
+- [Requisitos](#requisitos)
+- [Restrições](#restrições)
+- [Diferenciais Implementados](#diferenciais-implementados)
+- [Domínio do Problema](#domínio-do-problema)
+- [Modelagem de Domínio](#modelagem-de-domínio)
+- [Arquitetura Proposta](#arquitetura-proposta)
+- [Fluxo do Sistema](#fluxo-do-sistema)
+- [Design da API](#design-da-api)
+- [Armazenamento de Dados](#armazenamento-de-dados)
+
 Empresas buscam reduzir custos com energia por meio da comparação entre diferentes fornecedores e modalidades de contratação disponíveis em seu estado.
 
 A aplicação tem como objetivo permitir que essas empresas simulem e comparem opções de fornecimento de energia com base no consumo mensal informado e no estado selecionado.
@@ -140,7 +154,7 @@ A interface deve permitir que o usuário realize a consulta de forma simples e c
 
 ---
 
-# Domínio do Problema (**Ajustar depois**)
+# Domínio do Problema
 
 O domínio do problema consiste na comparação de ofertas de energia para empresas, considerando:
 
@@ -314,48 +328,75 @@ sequenceDiagram
 
 # Design da API
 
-## Operação principal
+## Operações implementadas
 
 **Entrada esperada:**
 
-* `uf`
-* `consumo_kwh`
+| Canal | Operação |
+| --- | --- |
+| REST | `GET /api/v1/estados` |
+| REST | `GET /api/v1/estados/{estado_id}?page=1&per_page=10` |
+| GraphQL | `POST /api/v1/graphql` com queries `estados` e `ofertasPorEstado(estadoId, page, perPage)` |
 
 **Saída esperada:**
 
-* tarifa base do estado;
-* lista de soluções disponíveis;
-* lista de fornecedores por solução;
-* custo estimado por fornecedor;
-* economia estimada por fornecedor;
-* economia percentual por fornecedor;
-* resumo consolidado por solução.
+| Item | Conteúdo |
+| --- | --- |
+| Estados | Lista com `id`, `nome`, `sigla` e `tarifa_base_kwh` |
+| Ofertas por estado | Lista paginada com `id`, `estado_id`, `fornecedor_id`, `solucao`, `custo_kwh` e dados do fornecedor (`nome`, métricas e `logo`) |
+| Paginação REST | Headers `X-Estado-Id`, `X-Page`, `X-Per-Page`, `X-Total-Count` |
 
 **Formato da API:**
 
-* REST e GraphQL
+| Formato |
+| --- |
+| REST |
+| GraphQL |
 
 **Exemplo de contrato:**
 
-* GET /api/v1/ofertas?uf=SP&consumo_kwh=5000
+| Método | Rota |
+| --- | --- |
+| `GET` | `/api/v1/estados` |
+| `GET` | `/api/v1/estados/1?page=1&per_page=10` |
 
-* Query GraphQL:
+* Query GraphQL para estados:
 
 ```graphql
-query (**Ajustar depois**)(uf: "SP", consumo_kwh: "5000") {
-  tarifaBase
-  ofertas {
+query Estados {
+  estados {
+    id
+    nome
+    sigla
+    tarifaBaseKwh
+  }
+}
+```
+
+* Query GraphQL para ofertas por estado:
+
+```graphql
+query OfertasPorEstado($estadoId: Int!, $page: Int!, $perPage: Int!) {
+  ofertasPorEstado(estadoId: $estadoId, page: $page, perPage: $perPage) {
+    id
+    estadoId
+    fornecedorId
     solucao
-    custoEstimado
-    economiaEstimado
-    economiaPercentual
-    fornecedores {
+    custoKwh
+    fornecedor {
       nome
-      logo { url }
+      numeroClientes
+      avaliacaoMedia
+      logo {
+        id
+        url
+      }
     }
   }
 }
 ```
+
+> Observação: na implementação atual, os cálculos de custo estimado, economia e economia percentual são derivados no frontend a partir de `consumo_kwh` informado pelo usuário, `tarifa_base_kwh` do estado e `custo_kwh` das ofertas retornadas pela API.
 
 ---
 

@@ -19,7 +19,7 @@ if [ ! -f "$TLS_CERT_PATH" ] || [ ! -f "$TLS_KEY_PATH" ]; then
     -out "$TLS_CERT_PATH" \
     -days "$CERT_VALID_DAYS" \
     -subj "/CN=${SERVER_NAME}" \
-    -addext "subjectAltName=DNS:${SERVER_NAME},DNS:web.${SERVER_NAME},DNS:api.${SERVER_NAME},DNS:localhost,IP:127.0.0.1"
+    -addext "subjectAltName=DNS:${SERVER_NAME},DNS:web.${SERVER_NAME},DNS:api.${SERVER_NAME},DNS:minio.${SERVER_NAME},DNS:minio-console.${SERVER_NAME},DNS:prometheus.${SERVER_NAME},DNS:grafana.${SERVER_NAME},DNS:localhost,DNS:web.localhost,DNS:api.localhost,DNS:minio.localhost,DNS:minio-console.localhost,DNS:prometheus.localhost,DNS:grafana.localhost,IP:127.0.0.1"
 
   chmod 600 "$TLS_KEY_PATH"
 fi
