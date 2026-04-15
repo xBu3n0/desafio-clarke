@@ -1,4 +1,27 @@
 services:
+  postgres:
+    image: postgres:16-alpine
+    mem_limit: ${POSTGRES_MEM_LIMIT:-384m}
+    restart: on-failure
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-clarke}
+      POSTGRES_USER: ${POSTGRES_USER:-clarke}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-clarke}
+    expose:
+      - "5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-clarke} -d ${POSTGRES_DB:-clarke}",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
   nginx:
     build:
       context: .
@@ -63,7 +86,7 @@ services:
     mem_limit: ${BACK_MEM_LIMIT:-384m}
     restart: on-failure
     environment:
-      DATABASE_URL: sqlite:////data/clarke.db
+      DATABASE_URL: ${DATABASE_URL:-postgresql+psycopg://clarke:clarke@postgres:5432/clarke}
       PORT: 5000
       MINIO_BUCKET_NAME: ${MINIO_BUCKET_NAME:-public}
       MINIO_PUBLIC_ENDPOINT: ${MINIO_PUBLIC_ENDPOINT:-https://minio.localhost}
@@ -75,8 +98,9 @@ services:
       ]
     expose:
       - "5000"
-    volumes:
-      - back-data:/data
+    depends_on:
+      postgres:
+        condition: service_healthy
     healthcheck:
       test:
         [
@@ -168,7 +192,7 @@ services:
       - prometheus
 
 volumes:
-  back-data:
+  postgres-data:
   minio-data:
   prometheus-data:
   grafana-data:

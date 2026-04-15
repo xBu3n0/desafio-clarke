@@ -67,7 +67,7 @@ Backend do desafio Clarke Energia implementado com **Python + Flask + SQLAlchemy
 
 | Item | Detalhe |
 | --- | --- |
-| Banco em produção local | SQLite (`DATABASE_URL=sqlite:////data/clarke.db`) |
+| Banco em produção local | PostgreSQL (`compose.yml`) |
 | Banco em desenvolvimento | PostgreSQL (`compose.dev.yml`) |
 | Migração | Alembic (`python -m app.infrastructure.migrate`) |
 | Dados iniciais | Seed idempotente (`python -m app.infrastructure.seed`) |
