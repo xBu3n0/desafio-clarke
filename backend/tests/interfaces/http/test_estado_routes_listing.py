@@ -122,7 +122,7 @@ def test_estado_endpoint_lists_paginated_offers_with_supplier_and_logo(
     assert len(payload) == 2
 
     first_item = payload[0]
-    assert first_item["estado_id"] == 1
+    assert first_item["estadoId"] == 1
     assert first_item["solucao"] in {"GD", "Mercado Livre"}
     assert isinstance(first_item["fornecedor"], dict)
     assert isinstance(first_item["fornecedor"]["logo"], dict)
@@ -179,11 +179,11 @@ def test_estados_endpoint_lists_all_states_without_pagination(
         "id": 11,
         "nome": "Acre",
         "sigla": "AC",
-        "tarifa_base_kwh": "0.61",
+        "tarifaBaseKwh": "0.61",
     }
     assert payload[2] == {
         "id": 12,
         "nome": "Ceara",
         "sigla": "CE",
-        "tarifa_base_kwh": "0.58",
+        "tarifaBaseKwh": "0.58",
     }

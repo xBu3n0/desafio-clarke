@@ -72,7 +72,7 @@ export function useEnergyComparison() {
 
   const custoBase = useMemo(() => {
     if (!estadoSelecionado) return 0;
-    const tarifa = parseNumber(estadoSelecionado.tarifa_base_kwh);
+    const tarifa = parseNumber(estadoSelecionado.tarifaBaseKwh);
     const consumo = parseInteger(consumoKwh);
     return consumo * tarifa;
   }, [estadoSelecionado, consumoKwh]);
@@ -88,7 +88,7 @@ export function useEnergyComparison() {
       const comparacao = buildComparacao(
         ofertas,
         consumoKwh,
-        parseNumber(estadoBase?.tarifa_base_kwh ?? 0),
+        parseNumber(estadoBase?.tarifaBaseKwh ?? 0),
       );
       setSolucoes(comparacao);
     } catch {

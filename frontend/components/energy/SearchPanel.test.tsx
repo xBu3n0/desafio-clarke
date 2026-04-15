@@ -7,7 +7,7 @@ const baseEstado = {
   id: 1,
   nome: "Sao Paulo",
   sigla: "SP",
-  tarifa_base_kwh: "0.89",
+  tarifaBaseKwh: "0.89",
 };
 
 describe("SearchPanel", () => {

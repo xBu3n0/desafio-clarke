@@ -28,7 +28,7 @@ def register_estado_routes(
                     "id": estado.id,
                     "nome": estado.nome,
                     "sigla": estado.sigla,
-                    "tarifa_base_kwh": format_decimal(estado.tarifa_base_kwh, 2),
+                    "tarifaBaseKwh": format_decimal(estado.tarifa_base_kwh, 2),
                 }
                 for estado in estados
             ]
@@ -69,17 +69,17 @@ def register_estado_routes(
             items.append(
                 {
                     "id": oferta.id,
-                    "estado_id": oferta.estado_id,
-                    "fornecedor_id": oferta.fornecedor_id,
+                    "estadoId": oferta.estado_id,
+                    "fornecedorId": oferta.fornecedor_id,
                     "solucao": oferta.solucao.value,
-                    "custo_kwh": format_decimal(oferta.custo_kwh, 2),
+                    "custoKwh": format_decimal(oferta.custo_kwh, 2),
                     "fornecedor": {
                         "id": fornecedor.id,
                         "nome": fornecedor.nome,
-                        "numero_clientes": fornecedor.numero_clientes,
-                        "avaliacao_total": fornecedor.avaliacao_total,
-                        "numero_avaliacoes": fornecedor.numero_avaliacoes,
-                        "avaliacao_media": format_decimal(
+                        "numeroClientes": fornecedor.numero_clientes,
+                        "avaliacaoTotal": fornecedor.avaliacao_total,
+                        "numeroAvaliacoes": fornecedor.numero_avaliacoes,
+                        "avaliacaoMedia": format_decimal(
                             fornecedor.avaliacao_media,
                             1,
                         ),

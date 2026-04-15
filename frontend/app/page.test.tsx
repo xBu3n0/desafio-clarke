@@ -13,7 +13,7 @@ describe("Home page", () => {
   it("renders the main sections using hook data", () => {
     // Arrange
     mockUseEnergyComparison.mockReturnValue({
-      estados: [{ id: 1, nome: "Sao Paulo", sigla: "SP", tarifa_base_kwh: "0.89" }],
+      estados: [{ id: 1, nome: "Sao Paulo", sigla: "SP", tarifaBaseKwh: "0.89" }],
       estadoId: 1,
       consumoKwh: "",
       fonte: "graphql",
@@ -25,7 +25,7 @@ describe("Home page", () => {
         id: 1,
         nome: "Sao Paulo",
         sigla: "SP",
-        tarifa_base_kwh: "0.89",
+        tarifaBaseKwh: "0.89",
       },
       solucoes: [
         { solucao: "GD", fornecedores: [] },

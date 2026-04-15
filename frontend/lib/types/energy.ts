@@ -4,7 +4,7 @@ export type Estado = {
   id: number;
   nome: string;
   sigla: string;
-  tarifa_base_kwh: string;
+  tarifaBaseKwh: string;
 };
 
 export type FornecedorComparacao = {

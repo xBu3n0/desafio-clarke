@@ -145,7 +145,7 @@ export function SearchPanel({
               Tarifa base
             </p>
             <p className="mt-1 mb-0">
-              {currencyFormatter.format(Number(estadoSelecionado.tarifa_base_kwh))}/kWh
+              {currencyFormatter.format(Number(estadoSelecionado.tarifaBaseKwh))}/kWh
             </p>
           </div>
           <div>

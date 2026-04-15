@@ -7,23 +7,7 @@ import type {
   OfertaNormalizada,
 } from "@/lib/types/energy";
 
-type OfertaRest = {
-  id: number;
-  solucao: "GD" | "Mercado Livre";
-  custo_kwh: string;
-  fornecedor: {
-    id: number;
-    nome: string;
-    numero_clientes: number;
-    avaliacao_media: string;
-    logo: {
-      url?: string;
-      path?: string;
-    };
-  };
-};
-
-type OfertaGraphql = {
+type OfertaApi = {
   id: number;
   solucao: "GD" | "Mercado Livre";
   custoKwh: string;
@@ -64,23 +48,7 @@ function normalizeLogoUrl(value: string | undefined): string {
   return `${normalizedPrefix}/${normalizedPath}`;
 }
 
-function normalizeFromRest(ofertas: OfertaRest[]): OfertaNormalizada[] {
-  return ofertas.map((oferta) => ({
-    solucao: oferta.solucao,
-    custoKwh: parseNumber(oferta.custo_kwh),
-    fornecedor: {
-      id: oferta.fornecedor.id,
-      nome: oferta.fornecedor.nome,
-      numeroClientes: oferta.fornecedor.numero_clientes,
-      avaliacaoMedia: parseNumber(oferta.fornecedor.avaliacao_media),
-      logoUrl: normalizeLogoUrl(
-        oferta.fornecedor.logo.path ?? oferta.fornecedor.logo.url,
-      ),
-    },
-  }));
-}
-
-function normalizeFromGraphql(ofertas: OfertaGraphql[]): OfertaNormalizada[] {
+function normalizeOfertas(ofertas: OfertaApi[]): OfertaNormalizada[] {
   return ofertas.map((oferta) => ({
     solucao: oferta.solucao,
     custoKwh: parseNumber(oferta.custoKwh),
@@ -104,12 +72,7 @@ async function fetchEstadosRest(): Promise<Estado[]> {
 async function fetchEstadosGraphql(): Promise<Estado[]> {
   const response = await api.post<{
     data?: {
-      estados: Array<{
-        id: number;
-        nome: string;
-        sigla: string;
-        tarifaBaseKwh: string;
-      }>;
+      estados: Estado[];
     };
     errors?: Array<{ message: string }>;
   }>("/graphql", {
@@ -129,27 +92,22 @@ async function fetchEstadosGraphql(): Promise<Estado[]> {
     throw new Error(response.data.errors[0].message);
   }
 
-  return (response.data.data?.estados ?? []).map((estado) => ({
-    id: estado.id,
-    nome: estado.nome,
-    sigla: estado.sigla,
-    tarifa_base_kwh: estado.tarifaBaseKwh,
-  }));
+  return response.data.data?.estados ?? [];
 }
 
 async function fetchOfertasRest(estadoId: number): Promise<OfertaNormalizada[]> {
-  const response = await api.get<OfertaRest[]>(`/estados/${estadoId}`, {
+  const response = await api.get<OfertaApi[]>(`/estados/${estadoId}`, {
     params: { page: 1, per_page: 100 },
   });
 
-  return normalizeFromRest(response.data);
+  return normalizeOfertas(response.data);
 }
 
 async function fetchOfertasGraphql(
   estadoId: number,
 ): Promise<OfertaNormalizada[]> {
   const response = await api.post<{
-    data?: { ofertasPorEstado: OfertaGraphql[] };
+    data?: { ofertasPorEstado: OfertaApi[] };
     errors?: Array<{ message: string }>;
   }>("/graphql", {
     query: `
@@ -177,7 +135,7 @@ async function fetchOfertasGraphql(
     throw new Error(response.data.errors[0].message);
   }
 
-  return normalizeFromGraphql(response.data.data?.ofertasPorEstado ?? []);
+  return normalizeOfertas(response.data.data?.ofertasPorEstado ?? []);
 }
 
 export async function fetchEstadosBySource(
