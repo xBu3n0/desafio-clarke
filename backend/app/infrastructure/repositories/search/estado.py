@@ -28,6 +28,6 @@ class SqlAlchemyEstadoSearchRepository(EstadoSearchRepository):
         return None if model is None else self._to_search_dto(model)
 
     def list_all(self) -> list[EstadoSearchDTO]:
-        statement = select(EstadoModel).order_by(EstadoModel.id)
+        statement = select(EstadoModel).order_by(EstadoModel.nome)
         models = self._session.scalars(statement).all()
         return [self._to_search_dto(model) for model in models]

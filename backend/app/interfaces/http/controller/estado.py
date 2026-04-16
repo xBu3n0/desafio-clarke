@@ -1,26 +1,18 @@
-from collections.abc import Callable
-
 from flask import Blueprint, jsonify, request
-from sqlalchemy import func, select
-from sqlalchemy.orm import Session, selectinload
 
+from app.application.services import SearchQueryService
 from app.domain.exceptions import EntityNotFoundError
-from app.infrastructure.orm import EstadoModel, OfertaModel
-from app.infrastructure.orm.energy.fornecedor import FornecedorModel
 from app.interfaces.shared import format_decimal, parse_positive_int
 
 
 def register_estado_routes(
     blueprint: Blueprint,
     *,
-    session_provider: Callable[[], Session],
+    search_query_service: SearchQueryService,
 ) -> None:
     @blueprint.get("/estados")
     def list_estados():
-        with session_provider() as session:
-            estados = session.scalars(
-                select(EstadoModel).order_by(EstadoModel.nome)
-            ).all()
+        estados = list(search_query_service.list_estados())
 
         return jsonify(
             [
@@ -38,30 +30,16 @@ def register_estado_routes(
     def list_ofertas_by_estado(estado_id: int):
         page = parse_positive_int(request.args.get("page", "1"), "page")
         per_page = parse_positive_int(request.args.get("per_page", "10"), "per_page")
-        offset = (page - 1) * per_page
 
-        with session_provider() as session:
-            estado = session.get(EstadoModel, estado_id)
-            if estado is None:
-                raise EntityNotFoundError("estado was not found")
+        estado = search_query_service.get_estado(estado_id)
+        if estado is None:
+            raise EntityNotFoundError("estado was not found")
 
-            total = session.scalar(
-                select(func.count())
-                .select_from(OfertaModel)
-                .where(OfertaModel.estado_id == estado_id)
-            )
-            ofertas = session.scalars(
-                select(OfertaModel)
-                .where(OfertaModel.estado_id == estado_id)
-                .options(
-                    selectinload(OfertaModel.fornecedor).selectinload(
-                        FornecedorModel.logo
-                    ),
-                )
-                .order_by(OfertaModel.id)
-                .offset(offset)
-                .limit(per_page)
-            ).all()
+        total, ofertas = search_query_service.list_ofertas_by_estado(
+            estado_id=estado_id,
+            page=page,
+            per_page=per_page,
+        )
 
         items = []
         for oferta in ofertas:
@@ -95,5 +73,5 @@ def register_estado_routes(
         response.headers["X-Estado-Id"] = str(estado_id)
         response.headers["X-Page"] = str(page)
         response.headers["X-Per-Page"] = str(per_page)
-        response.headers["X-Total-Count"] = str(total or 0)
+        response.headers["X-Total-Count"] = str(total)
         return response

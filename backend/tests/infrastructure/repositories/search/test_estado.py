@@ -83,4 +83,4 @@ def test_estado_repository_can_get_by_id_and_list_all(tmp_path) -> None:
     # Assert
     assert estado is not None
     assert estado.nome == "Parana"
-    assert [item.id for item in estados] == [1, 2]
+    assert [item.nome for item in estados] == ["Parana", "Sao Paulo"]

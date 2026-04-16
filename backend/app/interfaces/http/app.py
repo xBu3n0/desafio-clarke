@@ -12,7 +12,10 @@ from app.domain.exceptions import (
     ValidationError,
 )
 from app.infrastructure.database import create_engine_from_url, create_session_factory
-from app.infrastructure.dependencies import build_search_query_service
+from app.infrastructure.dependencies import (
+    build_graphql_schema,
+    build_search_query_service,
+)
 from app.infrastructure.telemetry import bootstrap_telemetry, instrument_flask_app
 
 from .controller import create_api_blueprint
@@ -50,10 +53,11 @@ def create_app(session_provider: Callable[[], Session] | None = None) -> Flask:
     search_query_service = build_search_query_service(
         session_provider=resolved_session_provider
     )
+    graphql_schema = build_graphql_schema(search_query_service=search_query_service)
     app.register_blueprint(
         create_api_blueprint(
-            session_provider=resolved_session_provider,
             search_query_service=search_query_service,
+            graphql_schema=graphql_schema,
         )
     )
     register_error_handlers(app)

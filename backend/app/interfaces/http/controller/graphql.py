@@ -1,16 +1,12 @@
 from flask import Blueprint, jsonify, request
-
-from app.application.services import SearchQueryService
-from app.interfaces.graphql import build_schema
+from strawberry import Schema
 
 
 def register_graphql_routes(
     blueprint: Blueprint,
     *,
-    search_query_service: SearchQueryService,
+    schema: Schema,
 ) -> None:
-    schema = build_schema(search_query_service)
-
     def _execute_graphql(
         query: str | None,
         variables: dict[str, object] | None,
